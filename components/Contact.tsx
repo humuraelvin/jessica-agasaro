@@ -3,14 +3,14 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
-import { Mail, Phone, MapPin, Send, CheckCircle, AlertCircle } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 
 const Contact = () => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  const [error, setError] = useState('');
+  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+  const [error, setError] = useState('')
 
   const contactInfo = [
     {
@@ -34,49 +34,50 @@ const Contact = () => {
   ]
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('sending');
-    setError('');
+    e.preventDefault()
+    setStatus('sending')
+    setError('')
     try {
       const res = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
-      });
+      })
       if (res.ok) {
-        setStatus('success');
-        setForm({ name: '', email: '', message: '' });
+        setStatus('success')
+        setForm({ name: '', email: '', message: '' })
       } else {
-        const data = await res.json();
-        setError(data.error || 'Failed to send message.');
-        setStatus('error');
+        const data = await res.json()
+        setError(data.error || 'Failed to send message.')
+        setStatus('error')
       }
     } catch (err: any) {
-      setError('Failed to send message.');
-      setStatus('error');
+      setError('Failed to send message.')
+      setStatus('error')
     }
-  };
-      }, 3000)
-    }, 2000)
   }
 
   return (
-    <section id="contact" ref={ref} className="section-padding bg-gradient-to-br from-secondary-50 to-primary-50 dark:from-gray-800 dark:to-gray-900">
-      <div className="container-max">
+    <section
+      id="contact"
+      ref={ref}
+      className="py-20 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-900"
+    >
+      <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-secondary-900 dark:text-white mb-6">
-            Get In <span className="gradient-text">Touch</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            Get In <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">Touch</span>
           </h2>
-          <p className="text-xl text-secondary-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Have a story idea, collaboration opportunity, or just want to connect? 
             I'd love to hear from you. Let's start a conversation.
           </p>
@@ -91,10 +92,10 @@ const Contact = () => {
             className="space-y-8"
           >
             <div>
-              <h3 className="text-3xl font-bold text-secondary-900 dark:text-white mb-6">
+              <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Let's Connect
               </h3>
-              <p className="text-lg text-secondary-600 dark:text-gray-300 leading-relaxed mb-8">
+              <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
                 I'm always interested in hearing about new opportunities, story ideas, 
                 or potential collaborations. Whether you're a fellow journalist, editor, 
                 or someone with an important story to tell, I'd love to connect.
@@ -102,25 +103,28 @@ const Contact = () => {
             </div>
 
             <div className="space-y-6">
-              {contactInfo.map((info, index) => (
-                <motion.a
-                  key={index}
-                  href={info.link}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                  transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="flex items-center space-x-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group"
-                >
-                  <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center group-hover:bg-primary-700 transition-colors duration-300">
-                    <info.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-secondary-900 dark:text-white">{info.title}</h4>
-                    <p className="text-secondary-600 dark:text-gray-300">{info.value}</p>
-                  </div>
-                </motion.a>
-              ))}
+              {contactInfo.map((info, index) => {
+                const Icon = info.icon
+                return (
+                  <motion.a
+                    key={index}
+                    href={info.link}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                    className="flex items-center space-x-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group"
+                  >
+                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center group-hover:bg-blue-700 transition-colors duration-300">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white">{info.title}</h4>
+                      <p className="text-gray-600 dark:text-gray-300">{info.value}</p>
+                    </div>
+                  </motion.a>
+                )
+              })}
             </div>
 
             <motion.div
@@ -129,24 +133,24 @@ const Contact = () => {
               transition={{ duration: 0.6, delay: 0.8 }}
               className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
             >
-              <h4 className="text-xl font-semibold text-secondary-900 dark:text-white mb-4">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 What I'm Looking For
               </h4>
-              <ul className="space-y-3 text-secondary-600 dark:text-gray-300">
+              <ul className="space-y-3 text-gray-600 dark:text-gray-300">
                 <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span>Collaborative journalism projects</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span>Speaking opportunities and workshops</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span>Media partnerships and exchanges</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span>Story ideas and investigative leads</span>
                 </li>
               </ul>
@@ -160,14 +164,14 @@ const Contact = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
           >
-            <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-6">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               Send a Message
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-secondary-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Name *
                   </label>
                   <input
@@ -177,12 +181,12 @@ const Contact = () => {
                     value={form.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     placeholder="Your full name"
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-secondary-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email *
                   </label>
                   <input
@@ -192,14 +196,14 @@ const Contact = () => {
                     value={form.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     placeholder="you@example.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-secondary-700 dark:text-gray-300 mb-2">
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Message *
                 </label>
                 <textarea
@@ -209,19 +213,19 @@ const Contact = () => {
                   onChange={handleInputChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
                   placeholder="Tell me about your story, collaboration idea, or just say hello..."
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full flex items-center justify-center space-x-2 px-6 py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-semibold transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center space-x-2 px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={status === 'sending'}
               >
                 {status === 'sending' ? (
                   <>
-                    <Send className="w-5 h-5 animate-spin mr-2" />
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
                     Sending...
                   </>
                 ) : (
@@ -232,23 +236,14 @@ const Contact = () => {
                 )}
               </button>
               {status === 'success' && (
-                <div className="flex items-center text-green-600 mt-4"><CheckCircle className="w-5 h-5 mr-2" />Message sent successfully!</div>
-                  className="flex items-center space-x-2 text-green-600 bg-green-50 p-4 rounded-lg"
-                >
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Message sent successfully! I'll get back to you soon.</span>
-                </motion.div>
+                <div className="flex items-center text-green-600 mt-4">
+                  <CheckCircle className="w-5 h-5 mr-2" />Message sent successfully!
+                </div>
               )}
-
-              {submitStatus === 'error' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center space-x-2 text-red-600 bg-red-50 p-4 rounded-lg"
-                >
-                  <AlertCircle className="w-5 h-5" />
-                  <span>Something went wrong. Please try again or contact me directly.</span>
-                </motion.div>
+              {status === 'error' && (
+                <div className="flex items-center text-red-600 mt-4">
+                  <AlertCircle className="w-5 h-5 mr-2" />{error || 'Something went wrong. Please try again or contact me directly.'}
+                </div>
               )}
             </form>
           </motion.div>
